@@ -180,7 +180,8 @@ func (mp *metricsMonitor) getMetricsJSON() ([]byte, error) {
 	return json.Marshal(mp.metrics)
 }
 
-// update token counters at model level and global level
+// update token counters at model level and global level.
+// Must be called with mp.mu write lock held.
 func (mp *metricsMonitor) updateTokenRollupCounters(metric TokenMetrics) {
 	updateRollup(&mp.rollup, metric)
 
