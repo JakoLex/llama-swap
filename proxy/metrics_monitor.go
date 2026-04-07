@@ -25,8 +25,9 @@ type TokenMetrics struct {
 	Timestamp       time.Time `json:"timestamp"`
 	Model           string    `json:"model"`
 	CachedTokens    int       `json:"cache_tokens"`
-	InputTokens     int       `json:"input_tokens"`
-	OutputTokens    int       `json:"output_tokens"`
+	InputTokens     int       `json:"prompt_tokens"`
+	OutputTokens    int       `json:"completion_tokens"`
+	TotalTokens     int       `json:"total_tokens"`
 	PromptPerSecond float64   `json:"prompt_per_second"`
 	TokensPerSecond float64   `json:"tokens_per_second"`
 	DurationMs      int       `json:"duration_ms"`
@@ -654,6 +655,7 @@ func parseMetrics(modelID string, start time.Time, usage, timings gjson.Result) 
 		CachedTokens:    cachedTokens,
 		InputTokens:     inputTokens,
 		OutputTokens:    outputTokens,
+		TotalTokens:     inputTokens + outputTokens,
 		PromptPerSecond: promptPerSecond,
 		TokensPerSecond: tokensPerSecond,
 		DurationMs:      durationMs,

@@ -1,0 +1,16 @@
+models:
+  qwen35:
+    cmd: /home/jakolex/Dokumente/AIstuff/llama.cpp/build/bin/llama-server --metrics -a qwen35 --jinja --log-timestamps --temp 1 --top-p 0.95 --top-k 20 --min-p 0.00 -c 190000 --prio 1 --threads-http 8 --mmap --host 0.0.0.0 --port ${PORT} --flash-attn on --cache-type-k q8_0 --cache-type-v q8_0 -b 2048 -ub 2048 -np 1 -t 8 --slot-save-path /home/jakolex/Dokumente/AIstuff/slots/ -m /home/jakolex/Dokumente/AIstuff/models/unsloth_Qwen3.5-35B-A3B-GGUF_Qwen3.5-35B-A3B-UD-IQ4_XS.gguf --mmproj /home/jakolex/Dokumente/AIstuff/models/unsloth_Qwen3.5-35B-A3B-GGUF_mmproj-BF16.gguf -ngl 99 --fit on
+    ttl: 600
+  gemma4dense:
+    cmd: /home/jakolex/Dokumente/AIstuff/llama.cpp/build/bin/llama-server --metrics -a gemma4dense --jinja --log-timestamps --temp 1 --top-p 0.95 --top-k 64 --min-p 0.00 -c 90000 --reasoning-budget 32768 --prio 2 --threads-http 8 --mmap --host 0.0.0.0 --port ${PORT} --flash-attn on --cache-type-k q4_0 --cache-type-v q4_0 -b 2048 -ub 2048 -np 1 -t 8 --slot-save-path /home/jakolex/Dokumente/AIstuff/slots/ -m /home/jakolex/Dokumente/AIstuff/models/gemma-4-31B-it-IQ4_XS.gguf --mmproj /home/jakolex/Dokumente/AIstuff/models/densemmproj-BF16.gguf -ngl 99 --fit on
+    ttl: 600
+  gemma4moe:
+    cmd: /home/jakolex/Dokumente/AIstuff/llama.cpp/build/bin/llama-server --metrics -a gemma4moe --jinja --log-timestamps --temp 1 --top-p 0.95 --top-k 64 --min-p 0.00 -c 220000 --reasoning-budget 32768 --prio 2 --threads-http 8 --mmap --host 0.0.0.0 --port ${PORT} --flash-attn on --cache-type-k q4_0 --cache-type-v q4_0 -b 2048 -ub 2048 -np 1 -t 8 --slot-save-path /home/jakolex/Dokumente/AIstuff/slots/ -m /home/jakolex/Dokumente/AIstuff/models/gemma-4-26B-A4B-it-UD-Q4_K_M.gguf --mmproj /home/jakolex/Dokumente/AIstuff/models/moemmproj-BF16.gguf -ngl 99 --fit on
+    ttl: 600
+  bge:
+    cmd: /home/jakolex/Dokumente/AIstuff/llama.cpp/build/bin/llama-server -m /home/jakolex/Dokumente/AIstuff/models/bge-m3-Q6_K.gguf --host 0.0.0.0 --port ${PORT} --embeddings --pooling cls -c 8192 -b 1024 -ngl 99 -a bge -ub 1024 -np 3 -t 8 --threads-http 8
+    ttl: 900
+  flux2:
+    cmd: /home/jakolex/Dokumente/AIstuff/flux-openai-api/venv/bin/python3 /home/jakolex/Dokumente/AIstuff/flux-openai-api/main.py --port ${PORT} --load-mode low_vram --low-vram-gpu-budget-gib 22 --low-vram-headroom-gib 0.5 --low-vram-cpu-budget-gib 14 --min-available-system-ram-gib 6 --disable-diffusers-warmup --default-response-format b64_json
+    ttl: 120
