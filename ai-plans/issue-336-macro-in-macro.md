@@ -2,6 +2,8 @@
 
 **Status: COMPLETED ✅**
 
+All implementation and tests complete. See `proxy/config/macro_in_macro_test.go` for the test suite.
+
 ## Title
 
 Fix macro substitution ordering by preserving definition order using ordered YAML parsing

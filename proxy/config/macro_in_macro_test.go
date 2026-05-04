@@ -160,6 +160,25 @@ models:
 	assert.Contains(t, err.Error(), "UNDEFINED")
 }
 
+// Test PORT macro in a global macro that is used by a model command
+func TestConfig_PortInGlobalMacro(t *testing.T) {
+	content := `
+startPort: 10000
+macros:
+  "podman-llama": "podman run --name ${MODEL_ID} -p ${PORT}:8080 ghcr.io/ggml-org/llama.cpp:server-cuda"
+
+models:
+  my-model:
+    cmd: ${podman-llama} -m model.gguf
+    proxy: http://localhost:${PORT}
+`
+
+	config, err := LoadConfigFromReader(strings.NewReader(content))
+	assert.NoError(t, err)
+	assert.Equal(t, "podman run --name my-model -p 10000:8080 ghcr.io/ggml-org/llama.cpp:server-cuda -m model.gguf", config.Models["my-model"].Cmd)
+	assert.Equal(t, "http://localhost:10000", config.Models["my-model"].Proxy)
+}
+
 // Test undefined macro reference error
 func TestConfig_UndefinedMacroReference(t *testing.T) {
 	content := `
