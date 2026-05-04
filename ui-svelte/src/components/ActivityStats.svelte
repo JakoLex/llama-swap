@@ -9,8 +9,8 @@
 
   let stats = $derived.by(() => {
     const totalRequests = $metrics.length;
-    const totalInputTokens = $metrics.reduce((sum, m) => sum + m.input_tokens, 0);
-    const totalOutputTokens = $metrics.reduce((sum, m) => sum + m.output_tokens, 0);
+    const totalInputTokens = $metrics.reduce((sum, m) => sum + m.prompt_tokens, 0);
+    const totalOutputTokens = $metrics.reduce((sum, m) => sum + m.completion_tokens, 0);
     const totalCacheTokens = $metrics.reduce((sum, m) => sum + m.cache_tokens, 0);
 
     const promptPerSecond = $metrics.filter((m) => m.prompt_per_second > 0).map((m) => m.prompt_per_second);
