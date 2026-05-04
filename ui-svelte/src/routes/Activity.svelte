@@ -101,8 +101,8 @@
               <td class="px-6 py-4">{formatRelativeTime(metric.timestamp)}</td>
               <td class="px-6 py-4">{metric.model}</td>
               <td class="px-6 py-4">{metric.cache_tokens > 0 ? metric.cache_tokens.toLocaleString() : "-"}</td>
-              <td class="px-6 py-4">{metric.input_tokens.toLocaleString()}</td>
-              <td class="px-6 py-4">{metric.output_tokens.toLocaleString()}</td>
+              <td class="px-6 py-4">{metric.prompt_tokens.toLocaleString()}</td>
+              <td class="px-6 py-4">{metric.completion_tokens.toLocaleString()}</td>
               <td class="px-6 py-4">{formatSpeed(metric.prompt_per_second)}</td>
               <td class="px-6 py-4">{formatSpeed(metric.tokens_per_second)}</td>
               <td class="px-6 py-4">{formatDuration(metric.duration_ms)}</td>

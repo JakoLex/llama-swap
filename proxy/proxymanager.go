@@ -363,6 +363,7 @@ func (pm *ProxyManager) setupGinEngine() {
 	pm.ginEngine.POST("/v1/audio/transcriptions", pm.apiKeyAuth(), pm.trackInflight(), pm.proxyOAIPostFormHandler)
 	pm.ginEngine.POST("/v1/images/generations", pm.apiKeyAuth(), pm.trackInflight(), pm.proxyInferenceHandler)
 	pm.ginEngine.POST("/v1/images/edits", pm.apiKeyAuth(), pm.trackInflight(), pm.proxyOAIPostFormHandler)
+	pm.ginEngine.POST("/v1/videos/generations", pm.apiKeyAuth(), pm.trackInflight(), pm.proxyInferenceHandler)
 
 	// sd.cpp /sdapi/v1 endpoints
 	pm.ginEngine.POST("/sdapi/v1/txt2img", pm.apiKeyAuth(), pm.trackInflight(), pm.proxyInferenceHandler)
@@ -681,6 +682,14 @@ func (pm *ProxyManager) proxyToUpstream(c *gin.Context) {
 		handler = processGroup.ProxyRequest
 	}
 
+	// Check if VRAM requirement is met before proxying
+	if modelConfig, ok := pm.config.Models[modelID]; ok {
+		if err := CheckVRAM(modelConfig.MinVramGB); err != nil {
+			pm.sendErrorResponse(c, http.StatusInsufficientStorage, fmt.Sprintf("cannot load model %s: %s", searchModelName, err.Error()))
+			return
+		}
+	}
+
 	// rewrite the path
 	originalPath := c.Request.URL.Path
 	c.Request.URL.Path = remainingPath
@@ -729,6 +738,14 @@ func (pm *ProxyManager) proxyInferenceHandler(c *gin.Context) {
 				return
 			}
 			localHandler = processGroup.ProxyRequest
+		}
+
+		// Check if VRAM requirement is met before proxying
+		if modelConfig, ok := pm.config.Models[modelID]; ok {
+			if err := CheckVRAM(modelConfig.MinVramGB); err != nil {
+				pm.sendErrorResponse(c, http.StatusInsufficientStorage, fmt.Sprintf("cannot load model %s: %s", requestedModel, err.Error()))
+				return
+			}
 		}
 
 		// issue #69 allow custom model names to be sent to upstream
@@ -876,6 +893,14 @@ func (pm *ProxyManager) proxyOAIPostFormHandler(c *gin.Context) {
 			nextHandler = processGroup.ProxyRequest
 		}
 
+		// Check if VRAM requirement is met before proxying
+		if modelConfig, ok := pm.config.Models[modelID]; ok {
+			if err := CheckVRAM(modelConfig.MinVramGB); err != nil {
+				pm.sendErrorResponse(c, http.StatusInsufficientStorage, fmt.Sprintf("cannot load model %s: %s", requestedModel, err.Error()))
+				return
+			}
+		}
+
 		useModelName = pm.config.Models[modelID].UseModelName
 		pm.proxyLogger.Debugf("ProxyManager using local Process for model: %s", requestedModel)
 	} else if pm.peerProxy != nil && pm.peerProxy.HasPeerModel(requestedModel) {
@@ -999,6 +1024,15 @@ func (pm *ProxyManager) proxyGETModelHandler(c *gin.Context) {
 			}
 			nextHandler = processGroup.ProxyRequest
 		}
+
+		// Check if VRAM requirement is met before proxying
+		if modelConfig, ok := pm.config.Models[modelID]; ok {
+			if err := CheckVRAM(modelConfig.MinVramGB); err != nil {
+				pm.sendErrorResponse(c, http.StatusInsufficientStorage, fmt.Sprintf("cannot load model %s: %s", requestedModel, err.Error()))
+				return
+			}
+		}
+
 		pm.proxyLogger.Debugf("ProxyManager using local Process for model: %s", requestedModel)
 	} else if pm.peerProxy != nil && pm.peerProxy.HasPeerModel(requestedModel) {
 		modelID = requestedModel

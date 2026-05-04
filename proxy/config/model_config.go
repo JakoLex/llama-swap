@@ -54,6 +54,9 @@ type ModelConfig struct {
 
 	// Timeout settings for proxy connections
 	Timeouts TimeoutsConfig `yaml:"timeouts"`
+
+	// Minimum VRAM in GB required to load this model. If not set or <= 0, no check is performed.
+	MinVramGB float64 `yaml:"minVramGB"`
 }
 
 func (m *ModelConfig) UnmarshalYAML(unmarshal func(interface{}) error) error {

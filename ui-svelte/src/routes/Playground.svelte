@@ -2,11 +2,12 @@
   import { persistentStore } from "../stores/persistent";
   import ChatInterface from "../components/playground/ChatInterface.svelte";
   import ImageInterface from "../components/playground/ImageInterface.svelte";
+  import VideoInterface from "../components/playground/VideoInterface.svelte";
   import AudioInterface from "../components/playground/AudioInterface.svelte";
   import SpeechInterface from "../components/playground/SpeechInterface.svelte";
   import RerankInterface from "../components/playground/RerankInterface.svelte";
 
-  type Tab = "chat" | "images" | "speech" | "audio" | "rerank";
+  type Tab = "chat" | "images" | "video" | "speech" | "audio" | "rerank";
 
   const selectedTabStore = persistentStore<Tab>("playground-selected-tab", "chat");
   let mobileMenuOpen = $state(false);
@@ -14,6 +15,7 @@
   const tabs: { id: Tab; label: string }[] = [
     { id: "chat", label: "Chat" },
     { id: "images", label: "Images" },
+    { id: "video", label: "Video" },
     { id: "speech", label: "Speech" },
     { id: "audio", label: "Transcription" },
     { id: "rerank", label: "Rerank" },
@@ -84,6 +86,9 @@
     </div>
     <div class="h-full" class:tab-hidden={$selectedTabStore !== "images"}>
       <ImageInterface />
+    </div>
+    <div class="h-full" class:tab-hidden={$selectedTabStore !== "video"}>
+      <VideoInterface />
     </div>
     <div class="h-full" class:tab-hidden={$selectedTabStore !== "speech"}>
       <SpeechInterface />

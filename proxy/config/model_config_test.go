@@ -170,3 +170,50 @@ models:
 	assert.Equal(t, 0.7, setParams["temperature"])
 	assert.Equal(t, 0.9, setParams["top_p"])
 }
+
+func TestConfig_MinVramGB_ParsedFromYAML(t *testing.T) {
+	content := `
+models:
+  model1:
+    cmd: path/to/cmd --arg1 one
+    proxy: "http://localhost:8080"
+    minVramGB: 8.5
+  model2:
+    cmd: path/to/cmd --arg1 one
+    proxy: "http://localhost:8081"
+
+healthCheckTimeout: 15
+`
+	cfg, err := LoadConfigFromReader(strings.NewReader(content))
+	if err != nil {
+		t.Fatalf("Failed to load config: %v", err)
+	}
+
+	model1, ok := cfg.Models["model1"]
+	assert.True(t, ok, "model1 should exist")
+	assert.Equal(t, 8.5, model1.MinVramGB, "minVramGB should be parsed as 8.5")
+
+	model2, ok := cfg.Models["model2"]
+	assert.True(t, ok, "model2 should exist")
+	assert.Equal(t, float64(0), model2.MinVramGB, "minVramGB should default to 0 when not specified")
+}
+
+func TestConfig_MinVramGB_NegativeValue(t *testing.T) {
+	content := `
+models:
+  model1:
+    cmd: path/to/cmd --arg1 one
+    proxy: "http://localhost:8080"
+    minVramGB: -1
+
+healthCheckTimeout: 15
+`
+	cfg, err := LoadConfigFromReader(strings.NewReader(content))
+	if err != nil {
+		t.Fatalf("Failed to load config: %v", err)
+	}
+
+	model, ok := cfg.Models["model1"]
+	assert.True(t, ok, "model1 should exist")
+	assert.Equal(t, float64(-1), model.MinVramGB, "minVramGB should parse negative values (handled at check time)")
+}

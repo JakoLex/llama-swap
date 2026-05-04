@@ -17,8 +17,8 @@ export interface Metrics {
   timestamp: string;
   model: string;
   cache_tokens: number;
-  input_tokens: number;
-  output_tokens: number;
+  prompt_tokens: number;
+  completion_tokens: number;
   prompt_per_second: number;
   tokens_per_second: number;
   duration_ms: number;
@@ -172,4 +172,33 @@ export interface SpeechGenerationRequest {
   model: string;
   input: string;
   voice: string;
+}
+
+export interface VideoGenerationRequest {
+  model: string;
+  prompt: string;
+  negative_prompt?: string;
+  n?: number;
+  width?: number;
+  height?: number;
+  num_frames?: number;
+  num_inference_steps?: number;
+  guidance_scale?: number;
+  duration?: number;
+  fps?: number;
+  motion_bucket_id?: number;
+  augmentation_level?: number;
+  seed?: number;
+  response_format?: "url" | "b64_json";
+}
+
+export interface VideoGenerationResponse {
+  created: number;
+  data: Array<{
+    url?: string;
+    b64_json?: string;
+    num_frames?: number;
+    duration?: number;
+    fps?: number;
+  }>;
 }
