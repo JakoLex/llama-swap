@@ -12,15 +12,22 @@ export interface Model {
   aliases?: string[];
 }
 
-export interface Metrics {
+export interface TokenMetrics {
+  cache_tokens: number;
+  input_tokens: number;
+  output_tokens: number;
+  prompt_per_second: number;
+  tokens_per_second: number;
+}
+
+export interface ActivityLogEntry {
   id: number;
   timestamp: string;
   model: string;
-  cache_tokens: number;
-  prompt_tokens: number;
-  completion_tokens: number;
-  prompt_per_second: number;
-  tokens_per_second: number;
+  req_path: string;
+  resp_content_type: string;
+  resp_status_code: number;
+  tokens: TokenMetrics;
   duration_ms: number;
   has_capture: boolean;
 }
